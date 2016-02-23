@@ -7,7 +7,7 @@ Initially, I processed the image using a series of for loops (to loop by image c
 
 ## Algorithm 
 
-During my research, I discovered the [im2col function](). I realized that if I converted the image into a series of columns with N rows, I could then multiply by a filter with N rows. All that I needed to do was transpose the filter from an M by N matrix, and then I could calculate the dot product from the result of im2col. Then I converted the image back using [col2im](). I did this individually for each color channel so I could support both grayscale and color images.
+During my research, I discovered the [im2col function](http://www.mathworks.com/help/images/ref/im2col.html). I realized that if I converted the image into a series of columns with N rows, I could then multiply by a filter with N rows. All that I needed to do was transpose the filter from an M by N matrix, and then I could calculate the dot product from the result of im2col. Then I converted the image back using [col2im](http://www.mathworks.com/help/images/ref/col2im.html). I did this individually for each color channel so I could support both grayscale and color images.
 
 ```matlab
 [image_height, image_width, num_channels] = size(image);
