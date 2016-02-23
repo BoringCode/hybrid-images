@@ -34,7 +34,6 @@ function output = my_imfilter(image, filter)
 % Your code here
 %%%%%%%%%%%%%%%%
 
-
 [image_height, image_width, num_channels] = size(image);
 margin_h = (size(filter, 1) - 1) / 2;
 margin_v = (size(filter, 2) - 1) / 2;
@@ -42,11 +41,13 @@ result = zeros(image_height, image_width, num_channels);
 
 %Loop through each color channel
 for channel = 1:num_channels
-    % Padded array to handle missing information in image
-    padded_array = padarray(image(:, :, channel), [margin_h margin_v]);
-    % Calculate dot product of filter and sliding array from image
-    temp = filter(:)' * im2col(padded_array, size(filter), 'sliding');
-    result(:,:,channel) = col2im(temp, [1 1], [image_height image_width]);
+  % Padded array to handle missing information in image
+  padded_image = padarray(image(:, :, channel), [margin_h margin_v]);
+  % Calculate dot product of filter and sliding array from image
+  % Transpose filter and convert each fw by fh block from the image into a column
+  temp = filter(:)' * im2col(padded_image, size(filter), 'sliding');
+  % Convert columns back into image and return the result
+  result(:,:,channel) = col2im(temp, [1 1], [image_height image_width]);
 end
 
 output = result;

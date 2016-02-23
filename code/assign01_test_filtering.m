@@ -8,7 +8,7 @@ close all
 
 %% Setup
 test_image = im2single(imread('../data/cat.bmp'));
-test_image = imresize(test_image, 0.7, 'bilinear'); %resizing to speed up testing
+%test_image = imresize(test_image, 0.7, 'bilinear'); %resizing to speed up testing
 figure(1)
 imshow(test_image)
 

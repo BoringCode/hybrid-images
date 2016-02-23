@@ -18,7 +18,7 @@
 <body>
 <div id="header" >
 <div id="headersub">
-<h1>Your Name</h1>
+<h1>Bradley Rosenfeld</h1>
 </div>
 </div>
 <div class="container">
@@ -26,62 +26,56 @@
 <h2>COS 351 Assignment 01 - Hybrid Images</h2>
 
 <div style="float: right; padding: 20px">
-<img src="placeholder.jpg" />
-<p style="font-size: 14px">Example of a right floating element.</p>
+<img src="images/catdog/hybrid_image.jpg" />
+<p style="font-size: 14px">Example of a hybrid image.</p>
 </div>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<p>For this project I was given the task of creating a hybrid image using image filtering.</p>
 
-<ol>
-<li>list element 1.</li>
-<li>list element 2.</li>
-<li>etc.</li>
-</ol>
+<p>Initially, I processed the image using a series of for loops (to loop by image channel, row, and column). I would grab a block from the image, perform an element-wise dot product on it with the filter, calculate the sum, and then throw it back in the original image. This worked but it proved to be extremely slow. Dr. Denning mentioned in class that matrix multiplication (in comparison to looping) is much faster in MATLAB, so I worked on figuring out how I could calculate the entire image at once.</p>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<div style="clear:both"></div>
 
-<div style="clear:both">
-<h3>Example heading</h3>
+<h3>The algorithm</h3>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<p>During my research, I discovered the <a href="http://www.mathworks.com/help/images/ref/im2col.html">im2col function</a>. I realized that if I converted the image into a series of columns with N rows, I could then multiply by a filter with N rows. All that I needed to do was transpose the filter from an M by N matrix, and then I could calculate the dot product from the result of im2col. Then I converted the image back using <a href="http://www.mathworks.com/help/images/ref/col2im.html">col2im</a>. I did this individually for each color channel so I could support both grayscale and color images.</p>
 
-<h2>Example of code with highlighting</h2>
-The javascript in the <code>highlighting</code> folder is configured to do syntax highlighting in code blocks such as the one below.<p>
+<pre>
+	<code>
+	[image_height, image_width, num_channels] = size(image);
+	margin_h = (size(filter, 1) - 1) / 2;
+	margin_v = (size(filter, 2) - 1) / 2;
+	result = zeros(image_height, image_width, num_channels);
 
-<pre><code>
-%example code
-for i = 1:length(offset)
-    source = imread(sprintf('%s/source_%02d.jpg',data_dir,i));
-    mask   = imread(sprintf('%s/mask_%02d.jpg',data_dir,i));
-    target = imread(sprintf('%s/target_%02d.jpg',data_dir,i));
+	%Loop through each color channel
+	for channel = 1:num_channels
+	  % Padded array to handle missing information in image
+	  padded_image = padarray(image(:, :, channel), [margin_h margin_v]);
+	  % Calculate dot product of filter and sliding array from image
+	  % Transpose filter and convert each fw by fh block from the image into a column
+	  temp = filter(:)' * im2col(padded_image, size(filter), 'sliding');
+	  % Convert columns back into image and return the result
+	  result(:,:,channel) = col2im(temp, [1 1], [image_height image_width]);
+	end
+	</code>
+</pre>
 
-</code></pre>
-
-<h3>Results in a table</h3>
+<h3>Results</h3>
 
 <table border=1>
 <tr>
-<td>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-</td>
+	<td>
+		<img src="images/catdog/hybrid_image_scales.jpg" style="width:100%">
+		<img src="images/catdog/high_frequencies.jpg" style="width:50%"><img src="images/catdog/low_frequencies.jpg" style="width:50%">
+	</td>
 </tr>
-
 <tr>
-<td>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-</td>
+	<td>
+		<img src="images/subfish/hybrid_image_scales.jpg" style="width:100%">
+		<img src="images/subfish/high_frequencies.jpg" style="width:50%"><img src="images/subfish/low_frequencies.jpg" style="width:50%">
+	</td>
 </tr>
 
 </table>
-
-<div style="clear:both" >
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-</div>
 </body>
 </html>

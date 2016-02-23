@@ -10,8 +10,8 @@ close all; % closes all figures
 
 %% Setup
 % read images and convert to floating point format
-image1 = im2single(imread('../data/dog.bmp'));
-image2 = im2single(imread('../data/cat.bmp'));
+image1 = im2single(imread('../data/submarine.bmp'));
+image2 = im2single(imread('../data/fish.bmp'));
 
 % Several additional test cases are provided for you, but feel free to make
 % your own (you'll need to align the images in a photo editor such as
@@ -51,10 +51,10 @@ high_frequencies = image2 - my_imfilter(image2, filter);
 % Combine the high frequencies and low frequencies
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-hybrid_image = low_frequencies + high_frequencies
+hybrid_image = low_frequencies + high_frequencies;
 
 %% Visualize and save outputs
-figure(1); imshow(low_frequencies)
+figure(1); imshow(low_frequencies);
 figure(2); imshow(high_frequencies + 0.5);
 figure(3); imshow(hybrid_image);
 vis = vis_hybrid_image(hybrid_image);
